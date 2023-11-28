@@ -10,7 +10,7 @@ app.use(express.json());
 
 // MONGO DB
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ivnezkj.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -113,14 +113,36 @@ async function run() {
       }
     });
     app.get("/donation-request/:id", async (req, res) => {
-      try {
-        const id = req.params.id;
-        const query = { _id: new Object(id) };
-        const result = await donationRequestCollection.findOne(query);
-        res.send(result);
-      } catch (error) {
-        console.log(error);
-      }
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await donationRequestCollection.findOne(query);
+      res.send(result);
+    });
+    app.put("/update-donation-request/:id", async (req, res) => {
+      const id = req.params.id;
+      const item = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          recipientName: item.recipientName,
+          bloodGroup: item.bloodGroup,
+          recipientDistrict: item.recipientDistrict,
+          recipientUpazila: item.recipientUpazila,
+          hospitalName: item.hospitalName,
+          fullAddress: item.fullAddress,
+          donationDate: item.donationDate,
+          donationTime: item.donationTime,
+          requestMessage: item.requestMessage,
+        },
+      };
+      const result = await donationRequestCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      console.log(result);
+      res.send(result);
     });
 
     // Connect the client to the server	(optional starting in v4.7)
