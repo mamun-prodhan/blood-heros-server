@@ -138,10 +138,16 @@ async function run() {
       };
       const result = await donationRequestCollection.updateOne(
         filter,
-        updatedDoc,
-        options
+        updatedDoc
+        // options
       );
       console.log(result);
+      res.send(result);
+    });
+    app.delete("/donation-data/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await donationRequestCollection.deleteOne(query);
       res.send(result);
     });
 
