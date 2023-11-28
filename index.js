@@ -83,7 +83,22 @@ async function run() {
       res.send(result);
     });
 
-    // donation data posting
+    // donation data
+    app.get("/my-donation-request", async (req, res) => {
+      try {
+        const email = req.query.email;
+        console.log(email);
+        const query = { requesterEmail: email };
+        const result = await donationRequestCollection
+          .find(query)
+          .sort({ createdAt: -1 })
+          .toArray();
+        console.log(result);
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
     app.post("/create-donation-request", async (req, res) => {
       try {
         const donationRequest = req.body;
@@ -95,6 +110,16 @@ async function run() {
       } catch (error) {
         console.log(error);
         res.send(error);
+      }
+    });
+    app.get("/donation-request/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new Object(id) };
+        const result = await donationRequestCollection.findOne(query);
+        res.send(result);
+      } catch (error) {
+        console.log(error);
       }
     });
 
