@@ -56,6 +56,30 @@ async function run() {
       const result = await usersCollection.findOne(query);
       res.send(result);
     });
+    // block user
+    app.patch("/blocked-user/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: "blocked",
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+    // active user
+    app.patch("/active-user/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: "active",
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
     // admin
     app.patch("/users/admin/:id", async (req, res) => {
       const id = req.params.id;
