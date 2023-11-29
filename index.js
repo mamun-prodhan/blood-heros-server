@@ -209,9 +209,43 @@ async function run() {
     });
 
     // blogs data
+    app.get("/all-blogs", async (req, res) => {
+      const result = await blogsCollection.find().toArray();
+      res.send(result);
+    });
+    app.delete("/all-blogs/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await blogsCollection.deleteOne(query);
+      res.send(result);
+    });
     app.post("/blogs", async (req, res) => {
       const blogsData = req.body;
       const result = await blogsCollection.insertOne(blogsData);
+      res.send(result);
+    });
+    // publish blog
+    app.patch("/publish-blog/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: "published",
+        },
+      };
+      const result = await blogsCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+    // unpublish blog
+    app.patch("/unpublish-blog/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          status: "draft",
+        },
+      };
+      const result = await blogsCollection.updateOne(filter, updatedDoc);
       res.send(result);
     });
 
