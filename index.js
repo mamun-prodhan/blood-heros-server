@@ -46,6 +46,10 @@ async function run() {
     });
 
     // user data---------------------------------------------------------------------
+    app.get("/all-users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
     app.get("/users", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -84,6 +88,10 @@ async function run() {
     });
 
     // donation data
+    app.get("/all-donation-request", async (req, res) => {
+      const result = await donationRequestCollection.find().toArray();
+      res.send(result);
+    });
     app.get("/my-donation-request", async (req, res) => {
       try {
         const email = req.query.email;
