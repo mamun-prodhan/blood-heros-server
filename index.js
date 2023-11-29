@@ -34,6 +34,7 @@ async function run() {
     const donationRequestCollection = client
       .db("assignment-12")
       .collection("donationRequest");
+    const blogsCollection = client.db("assignment-12").collection("blogs");
 
     //   get upazila and district data----------------------------------------------
     app.get("/upazilas", async (req, res) => {
@@ -204,6 +205,13 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await donationRequestCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // blogs data
+    app.post("/blogs", async (req, res) => {
+      const blogsData = req.body;
+      const result = await blogsCollection.insertOne(blogsData);
       res.send(result);
     });
 
