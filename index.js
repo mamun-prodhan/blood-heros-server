@@ -47,7 +47,6 @@ async function run() {
 
     // middlewares--------------------------------------------------------------
     const verifyToken = (req, res, next) => {
-      console.log("inside verify token", req.headers.authorization);
       if (!req.headers.authorization) {
         return res.status(401).send({ message: "unauthorized access" });
       }
@@ -73,16 +72,6 @@ async function run() {
       next();
     };
 
-    //   get upazila and district data----------------------------------------------
-    app.get("/upazilas", async (req, res) => {
-      const result = await upazilasCollection.find().toArray();
-      res.send(result);
-    });
-    app.get("/districts", async (req, res) => {
-      const result = await districtsCollection.find().toArray();
-      res.send(result);
-    });
-
     // user data---------------------------------------------------------------------
     app.get("/all-users", verifyToken, async (req, res) => {
       const result = await usersCollection.find().toArray();
@@ -99,9 +88,7 @@ async function run() {
           })
           .toArray();
         res.send(result);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     });
     app.get("/users", async (req, res) => {
       const email = req.query.email;
@@ -161,11 +148,9 @@ async function run() {
     app.post("/users", async (req, res) => {
       try {
         const usersData = req.body;
-        console.log(usersData);
         const result = await usersCollection.insertOne(usersData);
         res.send(result);
       } catch (error) {
-        console.log(error);
         res.send(error);
       }
     });
@@ -185,6 +170,16 @@ async function run() {
         },
       };
       const result = await usersCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
+    //   get upazila and district data----------------------------------------------
+    app.get("/upazilas", async (req, res) => {
+      const result = await upazilasCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/districts", async (req, res) => {
+      const result = await districtsCollection.find().toArray();
       res.send(result);
     });
 
@@ -210,13 +205,13 @@ async function run() {
     app.get("/my-donation-request", async (req, res) => {
       try {
         const email = req.query.email;
-        console.log(email);
+
         const query = { requesterEmail: email };
         const result = await donationRequestCollection
           .find(query)
           .sort({ createdAt: -1 })
           .toArray();
-        console.log(result);
+
         res.send(result);
       } catch (error) {
         console.log(error);
@@ -225,7 +220,6 @@ async function run() {
     app.post("/create-donation-request", async (req, res) => {
       try {
         const donationRequest = req.body;
-        console.log(donationRequest);
         const result = await donationRequestCollection.insertOne(
           donationRequest
         );
@@ -264,7 +258,7 @@ async function run() {
         updatedDoc
         // options
       );
-      console.log(result);
+
       res.send(result);
     });
     // handle donate
@@ -285,7 +279,7 @@ async function run() {
         updatedDoc,
         options
       );
-      console.log(result);
+
       res.send(result);
     });
     app.delete("/donation-data/:id", async (req, res) => {
