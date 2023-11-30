@@ -51,6 +51,21 @@ async function run() {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
+    app.get("/search", async (req, res) => {
+      const { bloodGroup, district, upazila } = req.query;
+      try {
+        const result = await usersCollection
+          .find({
+            bloodGroup,
+            district,
+            upazila,
+          })
+          .toArray();
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
     app.get("/users", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
@@ -136,11 +151,12 @@ async function run() {
       res.send(result);
     });
 
-    // donation data
+    // donation data----------------------------------------------
     app.get("/all-donation-request", async (req, res) => {
       const result = await donationRequestCollection.find().toArray();
       res.send(result);
     });
+
     app.get("/my-donation-request", async (req, res) => {
       try {
         const email = req.query.email;
