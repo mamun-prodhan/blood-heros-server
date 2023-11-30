@@ -294,6 +294,11 @@ async function run() {
       const result = await blogsCollection.find().toArray();
       res.send(result);
     });
+    app.get("/published-blogs", async (req, res) => {
+      const query = { status: "published" };
+      const result = await blogsCollection.find(query).toArray();
+      res.send(result);
+    });
     app.delete("/all-blogs/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
