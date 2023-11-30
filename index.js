@@ -157,6 +157,19 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/pending-donation-details/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await donationRequestCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.get("/pending-request", async (req, res) => {
+      const query = { donationStatus: "pending" };
+      const result = await donationRequestCollection.find(query).toArray();
+      res.send(result);
+    });
+
     app.get("/my-donation-request", async (req, res) => {
       try {
         const email = req.query.email;
@@ -213,6 +226,27 @@ async function run() {
         filter,
         updatedDoc
         // options
+      );
+      console.log(result);
+      res.send(result);
+    });
+    // handle donate
+    app.put("/handle-donate/:id", async (req, res) => {
+      const id = req.params.id;
+      const item = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          donorName: item.donorName,
+          donorEmail: item.donorEmail,
+          donationStatus: item.donationStatus,
+        },
+      };
+      const result = await donationRequestCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
       );
       console.log(result);
       res.send(result);
