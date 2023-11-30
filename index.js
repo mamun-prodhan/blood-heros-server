@@ -208,6 +208,37 @@ async function run() {
       res.send(result);
     });
 
+    // status done
+    app.patch("/donation/done/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          donationStatus: "done",
+        },
+      };
+      const result = await donationRequestCollection.updateOne(
+        filter,
+        updatedDoc
+      );
+      res.send(result);
+    });
+    // status canceled
+    app.patch("/donation/canceled/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          donationStatus: "canceled",
+        },
+      };
+      const result = await donationRequestCollection.updateOne(
+        filter,
+        updatedDoc
+      );
+      res.send(result);
+    });
+
     // blogs data
     app.get("/all-blogs", async (req, res) => {
       const result = await blogsCollection.find().toArray();
